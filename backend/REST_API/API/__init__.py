@@ -3,6 +3,10 @@ from flask_jwt_extended import (JWTManager, jwt_required,
     create_access_token, get_jwt_identity)
 from API_Models.models import *
 import requests
+from datetime import *
+from dateutil import parser
+from API.reminder import sendEmail
+from pytz import utc
 
 base_request_url = "https://canvas.instructure.com/api/v1/"
 
@@ -25,6 +29,7 @@ db.app = app
 db.init_app(app)
 db.create_all()
 
+current_date = datetime.today().astimezone(utc)
 
 
 @app.route("/user/register", methods=['POST'])
@@ -72,6 +77,9 @@ def data():
     cur_identity = get_jwt_identity()
     user = User.query.filter(User.id == cur_identity).first()
 
+    assignment_due_count = 0
+    message = "Canvas Alert! \n\n"
+
     #get the user's courses
     course_request = requests.get(base_request_url + "courses", headers={'Authorization': "Bearer " + user.access_token})
 
@@ -88,11 +96,20 @@ def data():
             assignment_data = assignment_request.json()
 
 
-            for j in range(len(assignment_data)):
-                assignment = Assignment(assignment_data[j]["id"], assignment_data[j]["name"], assignment_data[j]["description"], assignment_data[j]["due_at"])
-                course.assignments.append(assignment)
+            for j in range(len(assignment_data) - 1):
+                due_date = parser.parse(assignment_data[j]["due_at"])
+                if due_date > current_date:
+                    assignment = Assignment(assignment_data[j]["id"], assignment_data[j]["name"], assignment_data[j]["description"], assignment_data[j]["due_at"])
+                    course.assignments.append(assignment)
+                
+                if (due_date - current_date).days < 3:
+                    assignment_due_count += 1
 
             user_courses.append(course)
+
+    message += "You have {} assignments due in 2 days! Make sure you get them done!".format(assignment_due_count)
+
+    sendEmail(user.username, message)
 
     return jsonify([e.serialize() for e in user_courses]), 200
 
