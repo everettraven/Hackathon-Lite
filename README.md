@@ -2,11 +2,10 @@
 This is the repository for the Florida Polytechnic University Hackathon-Lite event.
 
 # Idea
-    1. Idea 1
-    2. Idea 2
+    Homework Reminder Service
 
 # Features To Implement
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
+- [ ] Create Backend Python REST API - Bryce
+- [ ] Create a python script to email and text a user about due assignments - Josh
+- [ ] Front end web application piece - Lauren
