@@ -7,6 +7,6 @@ This is the repository for the Florida Polytechnic University Hackathon-Lite eve
 
 # Features To Implement
 
--[] Feature 1
--[] Feature 2
--[] Feature 3
+- [ ] Feature 1
+- [ ] Feature 2
+- [ ] Feature 3
