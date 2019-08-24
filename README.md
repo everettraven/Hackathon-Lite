@@ -6,6 +6,6 @@ This is the repository for the Florida Polytechnic University Hackathon-Lite eve
 
 # Features To Implement
 
-- [ ] Create Backend Python REST API - Bryce
+- [x] Create Backend Python REST API - Bryce
 - [ ] Create a python script to email and text a user about due assignments - Josh
 - [ ] Front end web application piece - Lauren
