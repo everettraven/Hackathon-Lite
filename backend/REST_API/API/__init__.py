@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, Response
 from flask_jwt_extended import (JWTManager, jwt_required, 
     create_access_token, get_jwt_identity)
 from API_Models.models import *
+from flask_cors import CORS
 import requests
 from datetime import *
 from dateutil import parser
@@ -16,6 +17,7 @@ db_url = "sqlite:////tmp/temp.db"
 
 #Create the flask application
 app = Flask(__name__)
+CORS(app)
 
 #Set the config properties of the application
 app.config['SQLALCHEMY_DATABASE_URI'] = db_url
@@ -29,7 +31,7 @@ db.app = app
 db.init_app(app)
 db.create_all()
 
-current_date = datetime.today().astimezone(utc)
+current_date = datetime.now().astimezone(utc)
 
 
 @app.route("/user/register", methods=['POST'])
@@ -96,9 +98,9 @@ def data():
             assignment_data = assignment_request.json()
 
 
-            for j in range(len(assignment_data) - 1):
+            for j in range(len(assignment_data)):
                 due_date = parser.parse(assignment_data[j]["due_at"])
-                if due_date > current_date:
+                if due_date.date() < datetime.today().date():
                     assignment = Assignment(assignment_data[j]["id"], assignment_data[j]["name"], assignment_data[j]["description"], assignment_data[j]["due_at"])
                     course.assignments.append(assignment)
                 
